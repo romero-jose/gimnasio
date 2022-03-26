@@ -1,11 +1,12 @@
 from datetime import date
+import json
 import requests
 import bs4 as bs
 
-# from bs4 import soup
-
-URL = "https://ucampus.uchile.cl/m/fcfm_reservas/detalle"
-# id=70&fecha=2022-03-21
+CREDENTIAL_FILE = "credentials.json"
+BASE_URL = "https://ucampus.uchile.cl"
+URL = f"{BASE_URL}/m/fcfm_reservas/detalle"
+LOGIN_URL = f"{BASE_URL}/upasaporte/adi"
 
 
 def weekday(i: int) -> int:
@@ -23,19 +24,32 @@ def weekday(i: int) -> int:
     return weekdays[i]
 
 
-def fetch(date: date) -> str:
-    cookies = {
-        "_ga": "GA1.2.391761329.1614555898",
-        "_LB": "ucampus81-int",
-        "_fcfm": "2kic1hge4vrs1d6235t79mia3r",
-        "SESSID_upasaporte": "7v3hpscd38ff1i3e7ugksmee9p",
-        "res": "1920",
-        "io": "ga3mZIor5Qdr1Gio4YJ0",
-        "username": "joseromero",
+def get_credentials() -> dict[str, str]:
+    with open(CREDENTIAL_FILE) as f:
+        return json.load(f)
+
+
+def login(user: str, password: str):
+    s = requests.Session()
+
+    data = {
+        "servicio": "fcfm",
+        "debug": "0",
+        "extras[_LB]": "ucampus81-int",
+        "extras[lang]": "es",
+        "extras[recordar]": "1",
+        "recordar": "1",
+        "username": user,
+        "password": password,
     }
-    response = requests.get(
-        URL, params={"id": 70, "fecha": date.isoformat()}, cookies=cookies
-    )
+
+    s.post(LOGIN_URL, data=data)
+
+    return s
+
+
+def fetch(date: date, s: requests.Session) -> str:
+    response = s.get(URL, params={"id": 70, "fecha": date.isoformat()})
     with open("page.html", "w") as f:
         html = f.write(response.text)
     return response.text
@@ -72,18 +86,26 @@ def extract(html: str):
     return data
 
 
-def print(data):
+def print_data(data):
     for d in data:
-        print(f"|=========================================|")
+        print("|=========================================|")
         print(f"| Dia:     {weekday(d['dia'])}")
         print(f"| Horario: {d['horario']}")
         print(f"| Cupos:   {d['cupos']}")
         print(f"| Enlace:  {d['enlace']}")
 
+    if not data:
+        print("No hay horarios para hoy :(")
+
+
 def main():
-    html = fetch(date.today())
+    credentials = get_credentials()
+    authenticated_session = login(
+        user=credentials["user"], password=credentials["password"]
+    )
+    html = fetch(date=date.today(), s=authenticated_session)
     data = extract(html)
-    print(data)
+    print_data(data)
 
 
 if __name__ == "__main__":
