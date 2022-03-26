@@ -18,5 +18,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Test with pytest
+      env:
+        USER: ${{ secrets.USER }}
+        PASSWORD: ${{ secrets.PASSWORD }}
       run: |
         python main.py

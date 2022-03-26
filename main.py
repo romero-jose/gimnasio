@@ -1,7 +1,7 @@
 from datetime import date
-import json
 import requests
 import bs4 as bs
+import os
 
 CREDENTIAL_FILE = "credentials.json"
 BASE_URL = "https://ucampus.uchile.cl"
@@ -25,8 +25,12 @@ def weekday(i: int) -> int:
 
 
 def get_credentials() -> dict[str, str]:
-    with open(CREDENTIAL_FILE) as f:
-        return json.load(f)
+    user = os.environ["USER"]
+    password = os.environ["PASSWORD"]
+    return {
+        "user": user,
+        "password": password,
+    }
 
 
 def login(user: str, password: str):
