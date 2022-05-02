@@ -19,7 +19,7 @@ def weekday(i: int) -> int:
         "Sabado",
         "Domingo",
     ]
-    if i >= 7:
+    if i not in range(0, 7):
         raise Exception("Weekday index out of range")
     return weekdays[i]
 
@@ -74,7 +74,7 @@ def extract(html: str):
     for i, col in enumerate(tcols):
         rows = col.select("div.bloque.rainbow")
         for r in rows:
-            dia = i
+            dia = i - 1
             horario = r.find("h1").text
             cupos = r.find("h2").text
             enlace = f"{URL}/{r.find('a')['href']}"
