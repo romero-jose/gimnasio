@@ -87,8 +87,7 @@ def format_data(data):
         msg.append(f"| Enlace:  {d['enlace']}")
 
     if not data:
-        msg.append("No hay horarios disponibles :(")
-
+        return None
     return "\n".join(msg)
 
 
