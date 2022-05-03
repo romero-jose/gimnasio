@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import requests
 import bs4 as bs
 import os
@@ -7,21 +7,6 @@ CREDENTIAL_FILE = "credentials.json"
 BASE_URL = "https://ucampus.uchile.cl"
 URL = f"{BASE_URL}/m/fcfm_reservas/detalle"
 LOGIN_URL = f"{BASE_URL}/upasaporte/adi"
-
-
-def weekday(i: int) -> int:
-    weekdays = [
-        "Lunes",
-        "Martes",
-        "Miercoles",
-        "Jueves",
-        "Viernes",
-        "Sabado",
-        "Domingo",
-    ]
-    if i not in range(0, 7):
-        raise Exception("Weekday index out of range")
-    return weekdays[i]
 
 
 def get_credentials() -> dict[str, str]:
@@ -72,9 +57,11 @@ def extract(html: str):
     tcols = tbody.find_all("td")
     data = []
     for i, col in enumerate(tcols):
-        rows = col.select("div.bloque.rainbow")
+        if i < 1 or i > 6:
+            continue
+        dia = table.find("thead").find_all("th")[i].select("span.no-movil")[0].text
+        rows = col.select("div.bloque.rainbow-100")
         for r in rows:
-            dia = i - 1
             horario = r.find("h1").text
             cupos = r.find("h2").text
             enlace = f"{URL}/{r.find('a')['href']}"
@@ -93,23 +80,27 @@ def extract(html: str):
 def format_data(data):
     msg = []
     for d in data:
-        msg.append(f"|=========================================|")
-        msg.append(f"| Dia:     {weekday(d['dia'])}")
+        msg.append(f"|================================|")
+        msg.append(f"| Dia:     {d['dia']}")
         msg.append(f"| Horario: {d['horario']}")
         msg.append(f"| Cupos:   {d['cupos']}")
         msg.append(f"| Enlace:  {d['enlace']}")
 
     if not data:
-        msg.append("No hay horarios para hoy :(")
+        msg.append("No hay horarios disponibles :(")
 
     return "\n".join(msg)
+
 
 def fetch_formatted_data():
     credentials = get_credentials()
     authenticated_session = login(
         user=credentials["user"], password=credentials["password"]
     )
-    html = fetch(date=date.today(), s=authenticated_session)
-    data = extract(html)
+    data = []
+    today = date.today()
+    for d in [today, today + timedelta(days=7)]:
+        html = fetch(date=d, s=authenticated_session)
+        data += extract(html)
     formatted_data = format_data(data)
     return formatted_data
