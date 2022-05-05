@@ -1,7 +1,8 @@
+import os
 from scrape import fetch_formatted_data
 from bot import send_message
 
-CACHE_FILE = "cache.txt"
+CACHE_FILE = os.environ.get("CACHE_FILE", "cache.txt")
 
 
 def has_changed(str):
@@ -17,7 +18,7 @@ def has_changed(str):
 
 
 def main():
-    formatted_data = fetch_formatted_data() or 'No hay cupos disponibles :('
+    formatted_data = fetch_formatted_data() or "No hay cupos disponibles :("
     truncated = "\n".join(formatted_data.split("\n")[:-1])
     if has_changed(truncated):
         send_message(formatted_data)
