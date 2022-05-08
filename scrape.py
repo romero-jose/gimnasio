@@ -78,17 +78,18 @@ def extract(html: str):
 
 
 def format_data(data):
-    msg = []
-    for d in data:
-        msg.append(f"|================================|")
-        msg.append(f"| Dia:     {d['dia']}")
-        msg.append(f"| Horario: {d['horario']}")
-        msg.append(f"| Cupos:   {d['cupos']}")
-        msg.append(f"| Enlace:  {d['enlace']}")
-
     if not data:
         return None
-    return "\n".join(msg)
+    msg = []
+    for d in data:
+        msg.append(
+            f"""{d['dia']}
+• {d['horario']}
+• {d['cupos']}
+"""
+        )
+    msg.append(f"Reserva en: {URL}")
+    return "".join(msg)
 
 
 def fetch_formatted_data():
