@@ -53,6 +53,8 @@ def fetch_from_file(_: str) -> str:
 def extract(html: str):
     soup = bs.BeautifulSoup(html, features="html.parser")
     table = soup.find("table", attrs={"class": "dhorario"})
+    if table is None:
+        return []
     tbody = table.find("tbody")
     tcols = tbody.find_all("td")
     data = []
