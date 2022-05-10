@@ -90,7 +90,8 @@ def format_data(data):
 • {d['cupos']}
 """
         )
-    msg.append(f"Reserva en: {URL}")
+    url = f"{URL}?id=70#reservas"
+    msg.append(f"Reserva en: {url}")
     return "".join(msg)
 
 
