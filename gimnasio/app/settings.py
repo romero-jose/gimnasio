@@ -31,12 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Default
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # External
+    "huey.contrib.djhuey",
+    # Internal
     "reservations",
 ]
 
@@ -115,3 +119,9 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+HUEY = {
+    'huey_class': 'huey.SqliteHuey',
+    'immediate': False,
+    'consumer': {'workers': 2, 'worker_type': 'thread'},
+}

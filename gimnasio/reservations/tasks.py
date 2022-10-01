@@ -1,7 +1,10 @@
 import datetime
 
-import lib.scrape as scrape
 import reservations.models as models
+import lib.scrape as scrape
+
+from huey import crontab
+from huey.contrib.djhuey import db_periodic_task
 
 
 def update_slots(data):
@@ -23,6 +26,8 @@ def update_slots(data):
             models.Reservation.objects.get_or_create(slot=slot, user_uuid=user_id)
 
 
+@db_periodic_task(crontab(minute="*/1"))
 def fetch_and_update_slots():
     data = scrape.fetch_data()
     update_slots(data)
+    print("Updated slots")

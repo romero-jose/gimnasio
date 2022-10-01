@@ -5,3 +5,4 @@ gimnasio/.env
 __pycache__
 cache.txt
 gimnasio/db.sqlite3
+gimnasio/huey.db
