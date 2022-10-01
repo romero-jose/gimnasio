@@ -1,5 +1,7 @@
 .venv
 .vscode
-.env
+venv
+gimnasio/.env
 __pycache__
 cache.txt
+gimnasio/db.sqlite3
