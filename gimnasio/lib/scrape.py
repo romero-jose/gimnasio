@@ -1,10 +1,9 @@
-from calendar import week
-from datetime import datetime, date, timedelta, time
-import requests
-import bs4 as bs
 import os
 import uuid
+from datetime import date, datetime, time, timedelta
 
+import bs4 as bs
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,6 +14,7 @@ LOGIN_URL = f"{BASE_URL}/upasaporte/adi"
 
 USER = os.environ["USER"]
 PASSWORD = os.environ["PASSWORD"]
+
 
 def get_credentials() -> dict[str, str]:
     user = USER
@@ -47,7 +47,7 @@ def login(user: str, password: str):
 def fetch(date: date, s: requests.Session) -> str:
     response = s.get(URL, params={"id": 70, "fecha": date.isoformat()})
     with open("page.html", "w") as f:
-        html = f.write(response.text)
+        f.write(response.text)
     return response.text
 
 
@@ -63,7 +63,7 @@ def get_user_uuid_from_image_url(url: str) -> str:
     is not possible, it generates a random UUID.
 
     There are two cases, the url follows one of the two following formats:
-    1. https://ucampus.uchile.cl/d/r/usuario/2f/<uuid>/perfil/20bdaa5ec3e3d240649d372bbbcc3cb2.jpg
+    1. https://ucampus.uchile.cl/d/r/usuario/2f/<uuid>/perfil/<img>.jpg
     2. https://ucampus.uchile.cl/d/images/siglas/<initials>.svg'
     """
 
@@ -94,7 +94,6 @@ def extract(html: str) -> dict[str, str]:
             continue
         weekday = i
         day = first_day + timedelta(days=weekday - 1)
-        dia = table.find("thead").find_all("th")[i].select("span.no-movil")[0].text
         rows = col.select("div.bloque")
         for r in rows:
             horario = r.find("h1").text

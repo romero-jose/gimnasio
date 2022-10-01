@@ -1,6 +1,6 @@
-import lib.scrape as scrape
 import datetime
 
+import lib.scrape as scrape
 import reservations.models as models
 
 

@@ -1,10 +1,4 @@
-from calendar import FRIDAY, SATURDAY, SUNDAY, THURSDAY, TUESDAY, WEDNESDAY
-from enum import unique
-from django.utils.translation import gettext_lazy as _
 from django.db import models
-
-# Create your models here.
-# blocks, slots, reservations, users, preferred_blocks
 
 TIME_FORMAT = "%H:%M"
 

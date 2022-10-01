@@ -1,6 +1,7 @@
 import os
-from scrape import fetch_formatted_data
+
 from bot import send_message
+from scrape import fetch_formatted_data
 
 CACHE_FILE = os.environ.get("CACHE_FILE", "cache.txt")
 

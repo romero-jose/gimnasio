@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Block, Slot, BlockPreference, Reservation, User
+from .models import Block, BlockPreference, Reservation, Slot, User
 
 
 class BlockAdmin(admin.ModelAdmin):
