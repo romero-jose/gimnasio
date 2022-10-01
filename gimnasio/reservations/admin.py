@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Block, Slot, BlockPreference, Reservation
+from .models import Block, Slot, BlockPreference, Reservation, User
 
 
 class BlockAdmin(admin.ModelAdmin):
@@ -13,3 +13,4 @@ admin.site.register(Block, BlockAdmin)
 admin.site.register(Slot)
 admin.site.register(BlockPreference)
 admin.site.register(Reservation)
+admin.site.register(User)
