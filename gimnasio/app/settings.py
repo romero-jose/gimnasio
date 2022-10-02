@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-h1k7(9#=ar&y3&00xo*1j^^taas72z644eyyf+a_zh=w@fo9k4"
+SECRET_KEY = os.environ["SECRET_KEY"].strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ["DEBUG"].strip() == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [s.strip() for s in os.environ["ALLOWED_HOSTS"].split(",")]
 
 
 # Application definition
@@ -115,13 +119,15 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATIC_ROOT=os.environ["STATIC_ROOT"].strip()
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 HUEY = {
-    'huey_class': 'huey.SqliteHuey',
-    'immediate': False,
-    'consumer': {'workers': 2, 'worker_type': 'thread'},
+    "huey_class": "huey.SqliteHuey",
+    "immediate": False,
+    "consumer": {"workers": 2, "worker_type": "thread"},
 }
