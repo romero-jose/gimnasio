@@ -37,7 +37,7 @@ def fetch_and_update_slots():
     notify_users_open_slots()
 
 
-@db_task
+@db_task()
 def notify_users_open_slots():
     # Get available slots
     available_slots = (
