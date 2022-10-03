@@ -77,7 +77,11 @@ def get_user_uuid_from_image_url(url: str) -> str:
 def extract(html: str) -> dict[str, str]:
     soup = bs.BeautifulSoup(html, features="html.parser")
     ul = soup.find("ul", attrs={"class": "paginas"})
+    if ul is None:
+        return []
     li = ul.find("li", attrs={"class": "sel"})
+    if li is None:
+        return []
     fecha_inicio_y_fin_semana = li.text
     inicio_semana, fin_semana = [
         f.strip() for f in fecha_inicio_y_fin_semana.split("al")
@@ -132,7 +136,8 @@ def fetch_data():
     )
     data: list[dict] = []
     today = date.today()
-    for d in [today, today + timedelta(days=7)]:
+    first_day_of_week = today - timedelta(days=today.weekday())
+    for d in [first_day_of_week, first_day_of_week + timedelta(days=7)]:
         html = fetch(date=d, s=authenticated_session)
         data += extract(html)
     return data
