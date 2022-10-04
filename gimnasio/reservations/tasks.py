@@ -4,6 +4,7 @@ import reservations.models as models
 import lib.scrape as scrape
 import lib.bot as bot
 
+from django.db import transaction
 from django.db.models import Count, F
 from huey import crontab
 from huey.contrib.djhuey import db_task, db_periodic_task
@@ -24,8 +25,12 @@ def update_slots(data):
         slot, _ = models.Slot.objects.get_or_create(
             block=block, date=day, capacity=capacity
         )
-        for user_id in user_ids:
-            models.Reservation.objects.get_or_create(slot=slot, user_uuid=user_id)
+
+        with transaction.atomic():
+            models.Reservation.objects.filter(slot=slot).delete()
+            models.Reservation.objects.bulk_create(
+                [models.Reservation(slot=slot, user=user_id) for user_id in user_ids]
+            )
 
 
 @db_periodic_task(crontab(minute="*/1"))
